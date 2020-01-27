@@ -1,4 +1,12 @@
-
+*.DS_Store
+*.mvn/
+*Dockerfile
+*HELP.md
+*mvnw
+*mvnw.cmd
+*.DS_Store
+*target
+*uploads
 # Compiled class file
 *.class
 
