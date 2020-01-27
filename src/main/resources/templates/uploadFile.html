@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Upload CSV file</title>
+</head>
+<body>
+ 
+  <form action="/upload" method="post" enctype="multipart/form-data">
+  <h1>Upload CSV file to db</h1>
+  <div th:if="${success}">
+   <h3><span style="color: green;"  th:text="${success}"></span> </h3>
+ </div>
+ <div th:if="${message}">
+  <h3><span style="color: red;" th:text="${message}"></span> </h3> 
+  </div>
+    <table>
+    	<tr><td> <input name="file" type="file" accept=".csv"/></td></tr>
+    	<tr><td>  <input type="submit" /></td></tr>
+    </table>
+  </form>
+
+</body>
+</html>
