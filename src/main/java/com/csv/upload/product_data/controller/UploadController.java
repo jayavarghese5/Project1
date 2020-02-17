@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,9 @@ public class UploadController {
 	UploadService uploadService;
 	@GetMapping("/")
     public String index(Model model) {
+		List<Outlet> outletList=uploadService.getAllOutlets();
+		if(!outletList.isEmpty())
+            model.addAttribute("AllOutlets",uploadService.getAllOutlets());
         return "uploadFile";
     }
 	
@@ -56,7 +60,8 @@ public class UploadController {
         if(value.equalsIgnoreCase("valid")) {
         	File filenew=saveFileForFutureReference(file);
         	try {
-
+        		String []values3;
+        		boolean save=false; boolean saveRow=false;
             	String line,line1 = "",linenew;
     		    Scanner sc = new Scanner(filenew); 
     		    //skip the heading of the csv file.
@@ -69,6 +74,7 @@ public class UploadController {
  //is greater than 5 , if the values is less then add line 1 and line 2 and check if the total values are 
   //equal to 5. if its equal then our assumption was correct , if its not equal then our assumption was wrong 1st 
 //line was a err line so that value is entered in the err file.
+    		    	
     		    	if(values.length<5) {
     		    	   line1=sc.nextLine();
     		    	   values1=splitLinesTocolums(line1);
@@ -76,19 +82,24 @@ public class UploadController {
        		    		linenew=line+line1;
        		    		System.out.println("linenew****"+linenew);
        		    		String []values2=splitLinesTocolums(linenew);
-       		    		saveValid(values2,line);
+       		    		save=saveValid(values2,line);
        		    	   }
-    		    	}
-    		    	if(values.length>5) {
-    		    		saveValid(values,line);	
-    		    	}
-    		    	String []values3=splitLinesTocolums(line1);
-    		    	saveValid(values3,line1);
-    		    	saveValid(values,line);
+    		    	   if(!save) {
+    	    		    	  values3=splitLinesTocolums(line1);
+    	    		    	  saveValid(values3,line1);   
+    	    		    	  saveValid(values,line);
+    	    		    	}
+    		    	}  
+    		    	else
+    		    	  saveRow=saveValid(values,line);
+    		    	
     		    }
     		    LOGGER.info("Upload successfull!!");
                 model.addAttribute("success",
                         "You successfully uploaded '" + file.getOriginalFilename() + "'");
+                List<Outlet> outletList=uploadService.getAllOutlets();
+                if(!outletList.isEmpty())
+                  model.addAttribute("AllOutlets",uploadService.getAllOutlets());
     		    sc.close();
         	}
         	catch(Exception e) {
@@ -105,7 +116,7 @@ public class UploadController {
 		return "uploadFile";
     }
 	private boolean saveValid(String[] values2, String line){
-		boolean saved=false;
+		boolean saved = false;
 		if(values2.length>5 || values2.length<5) {
     		//our assumptions were wrong , so this values is saved in the errfile for further reference
 			try {
@@ -121,7 +132,7 @@ public class UploadController {
    			saveToDb(values2);
    			saved=true;
     	}
-		return true;
+		return saved;
 	}
 
 	private Outlet saveToDb(String []values) {
@@ -199,6 +210,8 @@ public class UploadController {
         BufferedWriter bw = new BufferedWriter(fw);
         // Write in file
         bw.write(s);
+        bw.newLine();
+        bw.flush();
         // Close connection
         bw.close();
 	}

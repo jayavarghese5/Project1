@@ -1,8 +1,39 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+
 <meta charset="UTF-8">
 <title>Upload CSV file</title>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+</style>
 </head>
 <body>
  
@@ -10,14 +41,32 @@
   <h1>Upload CSV file to db</h1>
   <div th:if="${success}">
    <h3><span style="color: green;"  th:text="${success}"></span> </h3>
+
  </div>
  <div th:if="${message}">
   <h3><span style="color: red;" th:text="${message}"></span> </h3> 
   </div>
     <table>
-    	<tr><td> <input name="file" type="file" accept=".csv"/></td></tr>
-    	<tr><td>  <input type="submit" /></td></tr>
+    	<tr><td> <input class="button" name="file" type="file" accept=".csv"/></td></tr>
+    	<tr><td>  <input type="submit" class="button" /></td></tr>
     </table>
+   <hr> 
+    <div th:if="${AllOutlets}">
+    <table>
+      <thead><tr><th>ID</th>
+       <th>Last Name</th>
+       <th>Location</th>
+       <th>Outlet Name</th>
+       <th>Outlet Type</tr></th></thead>
+       <tr th:each="outlet: ${AllOutlets}">
+		    <td th:text="${outlet.id}" />
+		    <td th:text="${outlet.lastName}" />
+		    <td th:text="${outlet.location}" />
+		    <td th:text="${outlet.outletName}" />
+		    <td th:text="${outlet.outletType}" />
+      </tr>
+    </table>
+   </div>
   </form>
 
 </body>
